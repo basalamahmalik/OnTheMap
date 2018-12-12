@@ -11,27 +11,26 @@ import UIKit
 
 class TableViewController: UITableViewController {
 
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var refreshButton: UIButton!
     @IBOutlet weak var logoutButton: UIButton!
-    
-    var studentInformations = [StudentInformation]()
+    var studentInformations = Client.sharedInstance().studentInformations
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        activityIndicator.isHidden = true
         loadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         tableView.reloadData()
     }
     
     @IBAction func refreshAction(_ sender: Any) {
-        self.loadData()
-        Client.sharedInstance().toast("Refreash", "Data have been Refreshed", viewController: self) { (success) in
-            if success{
-            }
-        }
+        loadData()
     }
     
     @IBAction func logoutAction(_ sender: Any) {
@@ -39,17 +38,24 @@ class TableViewController: UITableViewController {
         }
     
     func loadData(){
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+        
         Client.sharedInstance().getStudentsLocation { (success, results, errorString) in
             // We will create an MKPointAnnotation for each dictionary in "locations". The
             // point annotations will be stored in this array, and then provided to the map view.
             if success{
                 performUIUpdatesOnMain {
+                    self.activityIndicator.isHidden = true
+                    self.activityIndicator.stopAnimating()
                     self.studentInformations = results!
                     self.tableView.reloadData()
                 }
             }else{
+                self.activityIndicator.isHidden = true
+                self.activityIndicator.stopAnimating()
                 Client.sharedInstance().displayError(errorString, viewController: self, { (success) in
-                    // do nothing
+
                 })
             }
         }

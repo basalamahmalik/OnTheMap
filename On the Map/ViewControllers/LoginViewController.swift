@@ -16,18 +16,12 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var debugLabel: UILabel!
     @IBOutlet weak var signupButton: UIButton!
     
-    var session: URLSession!
     let signup = "https://www.udacity.com/account/auth#!/signup"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        usernameTextField.delegate = self;
-        passwordTextField.delegate = self;
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
+        usernameTextField.delegate = self
+        passwordTextField.delegate = self
     }
 
     @IBAction func loginAction(_ sender: AnyObject) {

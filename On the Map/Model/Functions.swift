@@ -80,11 +80,11 @@ extension Client {
     
     func getStudentsLocation(_ completionHandlerForStudentsLocation: @escaping (_ success: Bool, _ results: [StudentInformation]?, _ errorString: String?) -> Void) {
         //if you want specifec order
-        let params = [Constants.ParameterKeys.Order: "-updatedAt" as AnyObject]
+        let params = ["limit":"100",Constants.ParameterKeys.Order: "-updatedAt"] as [String : AnyObject]
         /* 2. Make the request */
         let method: String = Constants.Methods.StudentLocation
         
-        let _ = taskForGETMethod(method ,parameters: params ,type: Constants.Request.PARSE) { (results, error) in
+        let _ = taskForGETMethod(method ,parameters: params as [String : AnyObject] ,type: Constants.Request.PARSE) { (results, error) in
             /* 3. Send the desired value(s) to completion handler */
             guard (error == nil) else{
                 print(error!)
@@ -206,12 +206,12 @@ extension Client {
         }
         
     }
-    
     func logout(viewController: UIViewController) {
         Client.sharedInstance().logoutSession { (success, errorString) in
             if success {
                 performUIUpdatesOnMain {
-                    let loginVC : LoginViewController = viewController.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+                    viewController.dismiss(animated: true, completion: nil)
+                    let loginVC = viewController.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
                     viewController.present(loginVC,animated: true, completion: nil)
                 }
             }else{

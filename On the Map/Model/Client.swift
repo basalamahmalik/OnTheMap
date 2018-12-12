@@ -14,7 +14,7 @@ class Client: NSObject{
     var sessionID : String? = nil
     var userID : String? = nil
     var userName: String? = nil
-    var studentLocations: [[String:AnyObject]]? = nil
+    var studentInformations = [StudentInformation]()
     // MARK: Initializers
     
     override init() {

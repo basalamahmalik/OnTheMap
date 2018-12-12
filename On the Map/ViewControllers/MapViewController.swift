@@ -16,22 +16,22 @@ class MapViewController: UIViewController, MKMapViewDelegate{
     @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var refreshButton: UIButton!
     
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    var studentInformations = [StudentInformation]()
+    var studentInformations = Client.sharedInstance().studentInformations
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        activityIndicator.isHidden = true
         self.loadData()
-        // The "locations" array is an array of dictionary objects that are similar to the JSON
-        // data that you can download from parse.
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        //self.loadData()
     }
     
     func loadData(){
+
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    
         Client.sharedInstance().getStudentsLocation { (success, results, errorString) in
             // We will create an MKPointAnnotation for each dictionary in "locations". The
             // point annotations will be stored in this array, and then provided to the map view.
@@ -62,25 +62,19 @@ class MapViewController: UIViewController, MKMapViewDelegate{
                     annotations.append(annotation)
                 }
                 performUIUpdatesOnMain {
+                    self.activityIndicator.isHidden = true
+                    self.activityIndicator.stopAnimating()
                     self.mapView.addAnnotations(annotations)
                 }
             }else{
+                self.activityIndicator.isHidden = true
+                self.activityIndicator.stopAnimating()
                 Client.sharedInstance().displayError(errorString, viewController: self, { (success) in
-                    // do nothing
+
                 })
             }
         }
-        
-        // The "locations" array is loaded with the sample data below. We are using the dictionaries
-        // to create map annotations. This would be more stylish if the dictionaries were being
-        // used to create custom structs. Perhaps StudentLocation structs.
-        
-        
-            // Finally we place the annotation in an array of annotations.
-    
-        
-        // When the array is complete, we add the annotations to the map.
-    
+
     }
     // MARK: - MKMapViewDelegate
     
@@ -121,11 +115,7 @@ class MapViewController: UIViewController, MKMapViewDelegate{
         }
     
     @IBAction func refreshAction(_ sender: Any) {
-        self.loadData()
-        Client.sharedInstance().toast("Refreash", "Data have been Refreshed", viewController: self) { (success) in
-            if success{
-            }
-        }
+        loadData()
     }
     
     @IBAction func logoutAction(_ sender: Any) {

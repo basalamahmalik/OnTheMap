@@ -17,12 +17,14 @@ class PreviewLocationViewController: UIViewController, MKMapViewDelegate{
     var placemark: CLPlacemark? = nil
     var data: [String:AnyObject]? = nil
 
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var mapView: MKMapView!
     
     @IBOutlet weak var finishButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        activityIndicator.isHidden = true
         getGeocodLocation(address: location!)
     }
     
@@ -34,12 +36,16 @@ class PreviewLocationViewController: UIViewController, MKMapViewDelegate{
     
     func getGeocodLocation(address : String) {
 
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
         let geocoder = CLGeocoder()
             geocoder.geocodeAddressString(address, completionHandler: { (results, error) in
             if let error = error
             {
                 Client.sharedInstance().displayError(error as? String, viewController: self) { (success) in
                     if success {
+                        self.activityIndicator.isHidden = true
+                        self.activityIndicator.stopAnimating()
                         if let navigationController = self.navigationController{
                             navigationController.popToRootViewController(animated: true)
                     }
@@ -50,6 +56,8 @@ class PreviewLocationViewController: UIViewController, MKMapViewDelegate{
             {
                 Client.sharedInstance().displayError(error as? String, viewController: self) { (success) in
                     if success {
+                        self.activityIndicator.isHidden = true
+                        self.activityIndicator.stopAnimating()
                         if let navigationController = self.navigationController{
                             navigationController.popToRootViewController(animated: true)
                         }
@@ -58,8 +66,11 @@ class PreviewLocationViewController: UIViewController, MKMapViewDelegate{
             }
             else
             {
+                self.activityIndicator.isHidden = true
+                self.activityIndicator.stopAnimating()
                 self.placemark = results![0]
                 self.mapView.showAnnotations([MKPlacemark(placemark: self.placemark!)], animated: true)
+                
             }
             
         })
