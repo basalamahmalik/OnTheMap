@@ -40,37 +40,30 @@ class PreviewLocationViewController: UIViewController, MKMapViewDelegate{
         activityIndicator.startAnimating()
         let geocoder = CLGeocoder()
             geocoder.geocodeAddressString(address, completionHandler: { (results, error) in
-            if let error = error
-            {
-                Client.sharedInstance().displayError(error as? String, viewController: self) { (success) in
+            if let error = error{
+                Client.sharedInstance().displayError(error.localizedDescription, viewController: self) { (success) in
                     if success {
-                        self.activityIndicator.isHidden = true
-                        self.activityIndicator.stopAnimating()
-                        if let navigationController = self.navigationController{
-                            navigationController.popToRootViewController(animated: true)
-                    }
+                            self.activityIndicator.isHidden = true
+                            self.activityIndicator.stopAnimating()
+                        self.finishButton.isEnabled = false
+
                 }
                 }
-            }
-            else if (results!.isEmpty)
-            {
-                Client.sharedInstance().displayError(error as? String, viewController: self) { (success) in
+            }else if (results!.isEmpty){
+                Client.sharedInstance().displayError(error?.localizedDescription, viewController: self) { (success) in
                     if success {
-                        self.activityIndicator.isHidden = true
-                        self.activityIndicator.stopAnimating()
-                        if let navigationController = self.navigationController{
-                            navigationController.popToRootViewController(animated: true)
+                        performUIUpdatesOnMain {
+                            self.activityIndicator.isHidden = true
+                            self.activityIndicator.stopAnimating()
+                            self.finishButton.isEnabled = false
                         }
                     }
                 }
-            }
-            else
-            {
+            }else{
                 self.activityIndicator.isHidden = true
                 self.activityIndicator.stopAnimating()
                 self.placemark = results![0]
                 self.mapView.showAnnotations([MKPlacemark(placemark: self.placemark!)], animated: true)
-                
             }
             
         })

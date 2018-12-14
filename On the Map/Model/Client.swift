@@ -14,7 +14,8 @@ class Client: NSObject{
     var sessionID : String? = nil
     var userID : String? = nil
     var userName: String? = nil
-    var studentInformations = [StudentInformation]()
+    let studentLocation = StudentDataSource.sharedInstance.studentLocations
+
     // MARK: Initializers
     
     override init() {
@@ -32,7 +33,6 @@ class Client: NSObject{
         request.addValue(Constants.AUTH.ApiKey, forHTTPHeaderField: Constants.ParameterKeys.ApiKey)
         }
         /* 4. Make the request */
-        print(request.url!)
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             
             func sendError(_ error: String) {
@@ -43,7 +43,8 @@ class Client: NSObject{
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error!)")
+                sendError("There was an error with your request: \(String(describing: error?.localizedDescription))")
+                
                 return
             }
             
@@ -98,8 +99,6 @@ class Client: NSObject{
         request.addValue(Constants.ParameterKeys.ApplicationJson, forHTTPHeaderField: Constants.ParameterKeys.ContentType)
         
         request.httpBody = jsonBody.data(using: String.Encoding.utf8)
-        print(jsonBody.data(using: String.Encoding.utf8)!)
-        print(request.url!)
         /* 4. Make the request */
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             
@@ -111,15 +110,23 @@ class Client: NSObject{
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error!)")
+                sendError("There was an error with your request: \(String(describing: error?.localizedDescription))")
+                
                 return
             }
             
             /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
+            let statusCode = (response as? HTTPURLResponse)?.statusCode
+            guard statusCode! >= 200 && statusCode! <= 299 else {
+                if statusCode! == 403 {
+                    sendError("Login Failed. Wrong credentials")
+                }
+                else {
+                    sendError("Your request returned a status code other than 2xx!")
+                }
                 return
             }
+
             
             /* GUARD: Was there any data returned? */
             guard let data = data else {
@@ -175,7 +182,8 @@ class Client: NSObject{
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error!)")
+                sendError("There was an error with your request: \(String(describing: error?.localizedDescription))")
+                
                 return
             }
             
@@ -237,7 +245,8 @@ class Client: NSObject{
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error!)")
+                sendError("There was an error with your request: \(String(describing: error?.localizedDescription))")
+                
                 return
             }
             

@@ -18,8 +18,7 @@ class MapViewController: UIViewController, MKMapViewDelegate{
     
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    var studentInformations = Client.sharedInstance().studentInformations
-
+    var studentLocation = StudentDataSource.sharedInstance.studentLocations
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,14 +36,15 @@ class MapViewController: UIViewController, MKMapViewDelegate{
             // point annotations will be stored in this array, and then provided to the map view.
             var annotations = [MKPointAnnotation]()
             if success{
-                    self.studentInformations = results!
                 
-                for dictionary in self.studentInformations {
+                self.studentLocation = results!
+                
+                for dictionary in self.studentLocation {
                     
                     // Notice that the float values are being used to create CLLocationDegree values.
                     // This is a version of the Double type.
-                    let lat = CLLocationDegrees(dictionary.latitude)
-                    let long = CLLocationDegrees(dictionary.longitude)
+                    let lat = CLLocationDegrees(dictionary.latitude!)
+                    let long = CLLocationDegrees(dictionary.longitude!)
                     
                     // The lat and long are used to create a CLLocationCoordinates2D instance.
                     let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
@@ -56,7 +56,7 @@ class MapViewController: UIViewController, MKMapViewDelegate{
                     // Here we create the annotation and set its coordiate, title, and subtitle properties
                     let annotation = MKPointAnnotation()
                     annotation.coordinate = coordinate
-                    annotation.title = "\(first) \(last)"
+                    annotation.title = "\(first!) \(last!)"
                     annotation.subtitle = mediaURL
                    
                     annotations.append(annotation)

@@ -23,12 +23,7 @@ extension Client {
                 /* 3. Send the desired value(s) to completion handler */
                 guard (error == nil) else{
                     print(error!)
-                    if ((error?.isEqual("There was an error with your request: \(error!)"))!){
-                    completionHandlerForSession(false, "Login Failed (Please Check Your Network).")
-                    }else{
-                completionHandlerForSession(false,"Login Failed (Incorrect Email or Password, Please try again).")
-
-                    }
+                    completionHandlerForSession(false, error?.localizedDescription)
                     return
                 }
                 
@@ -96,7 +91,6 @@ extension Client {
             return
             }
             let studentInformations = StudentInformation.LocationsFromResults(data)
-            //print(studentInformations)
             completionHandlerForStudentsLocation(true, studentInformations ,nil)
         }
     }

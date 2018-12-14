@@ -22,6 +22,8 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         usernameTextField.delegate = self
         passwordTextField.delegate = self
+        setUIEnabled(true)
+        
     }
 
     @IBAction func loginAction(_ sender: AnyObject) {
@@ -30,6 +32,7 @@ class LoginViewController: UIViewController {
                 // do nothing
             })
         }
+        setUIEnabled(false)
         authentication(username: usernameTextField.text!, password: passwordTextField.text!)
     }
     
@@ -39,6 +42,7 @@ class LoginViewController: UIViewController {
                 if success {
                     self.completeLogin()
                 } else {
+                    self.setUIEnabled(true)
                     Client.sharedInstance().displayError(errorString, viewController: self, { (success) in
                         // do nothing
                     })

@@ -11,24 +11,36 @@ import Foundation
 
 struct StudentInformation {
     
-    let objectID: String
+    let objectID: String?
     let uniqueKey: String?
-    let firstName: String
-    let lastName: String
+    let firstName: String?
+    let lastName: String?
     let mapString: String?
-    let mediaURL: String
-    let latitude: Double
-    let longitude: Double
+    let mediaURL: String?
+    let latitude: Double?
+    let longitude: Double?
     
     init(locationDictionary: [String:AnyObject])
     {
         // Check & Set the most important properties
-        firstName = locationDictionary[Constants.ParseResponseKeys.firstName] as! String
-        lastName = locationDictionary[Constants.ParseResponseKeys.lastName] as! String
-        latitude = locationDictionary[Constants.ParseResponseKeys.latitude] as! Double
-        //longitude = locationDictionary[Constants.ParseResponseKeys.longitude] as! Double
-        mediaURL = locationDictionary[Constants.ParseResponseKeys.mediaURL] as! String
-        //objectID = locationDictionary[Constants.ParseResponseKeys.objectID] as! String
+        if let firstname = locationDictionary[Constants.ParseResponseKeys.firstName] as? String {
+            self.firstName = firstname
+        } else {
+            self.firstName = ""
+        }
+        
+        if let lastname = locationDictionary[Constants.ParseResponseKeys.lastName] as? String {
+            self.lastName = lastname
+        } else {
+            self.lastName = ""
+        }
+        
+        if let latitude = locationDictionary[Constants.ParseResponseKeys.latitude] as? Double {
+            self.latitude = latitude
+        } else {
+            self.latitude = 0.0
+        }
+
         if let longitude = locationDictionary[Constants.ParseResponseKeys.longitude] as? Double {
             self.longitude = longitude
         } else {
@@ -39,6 +51,12 @@ struct StudentInformation {
             self.objectID = objectID
         } else {
             self.objectID = ""
+        }
+        
+        if let mediaurl = locationDictionary[Constants.ParseResponseKeys.mediaURL] as? String {
+            self.mediaURL = mediaurl
+        } else {
+            self.mediaURL = ""
         }
         
         if let uniqueKey = locationDictionary[Constants.ParseResponseKeys.uniqueKey] as? String {
@@ -52,8 +70,6 @@ struct StudentInformation {
         } else {
             self.mapString = ""
         }
-
-
     }
     
     static func LocationsFromResults(_ results: [[String:AnyObject]]) -> [StudentInformation] {
